@@ -107,3 +107,38 @@ $ cat array2 array3 | jsonwrench array
 [["line 4", "line 5"], ["line 6"]]
 $ echo `cat array1` `cat array2 array3 | jsonwrench array` | jsonwrench array
 [["line 1", "line 2", "line 3"], [["line 4", "line 5"], ["line 6"]]]
+
+## Deconstructing JSON
+
+Many unix tools are line-oriented, so it's useful to be able to convert a JSON array into lines.
+
+### convert an array back into lines
+
+$ cat groceries.json
+["apple", "banana", "chocolate cookies"]
+$ jw unlines < groceries.json
+apple
+banana
+chocolate cookies
+
+Note, however, that a newline character in any of the strings will result in more lines than array elements. In that case, you want to keep the array elements as JSON strings so that they each fit on a single line.
+
+$ cat groceries-verbose.json
+["apple", "banana\nmake sure they're ripe!", "chocolate cookies"]
+$ jw unlines < groceries-verbose.json
+apple
+banana
+make sure they're ripe!
+chocolate cookies
+$ jw unarray < groceries-verbose.json
+"apple"
+"banana\nmake sure they're ripe!"
+"chocolate cookies"
+
+This also works for non-string elements.
+
+$ cat articles.json
+[{"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}, {"title": JSONWrench Examples", "author": "jekor", "date": "2012-03-27"}]
+$ jw unarray < articles.json
+{"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}
+{"title": JSONWrench Examples", "author": "jekor", "date": "2012-03-27"}
