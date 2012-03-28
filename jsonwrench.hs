@@ -56,10 +56,10 @@ main = do
        js' <- parse (many1 json) <$> BL.getContents
        case js' of
          Done _ [Array ks', Array vs] -> do
-           let ks = map (\k -> case k of
-                                 String str -> str
-                                 _          -> error "zip requires the first JSON array to contain only strings") $ V.toList ks'
-           BL.putStrLn $ encode $ object $ zip ks $ V.toList vs
+           let ks = V.map (\k -> case k of
+                                   String str -> str
+                                   _          -> error "zip requires the first JSON array to contain only strings") ks'
+           BL.putStrLn $ encode $ object $ V.toList $ V.zip ks vs
          Done _ _ -> error "zip requires 2 JSON arrays"
          Fail _ _ err -> error err
     ["concat"] -> do
