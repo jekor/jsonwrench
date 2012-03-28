@@ -1,0 +1,31 @@
+Name:          jsonwrench
+Version:       0.0.1
+Cabal-Version: >= 1.2
+License:       GPL
+License-File:  COPYING
+Copyright:     2012 Chris Forno
+Author:        Chris Forno (jekor)
+Maintainer:    jekor@jekor.com
+Stability:     experimental
+Bug-Reports:   jekor@jekor.com
+Homepage:      https://github.com/jekor/jsonwrench
+Package-URL:   https://github.com/jekor/jsonwrench/zipball/master
+Category:      Text
+Synopsis:      JSON building and manipulation on the commandline
+Description:   JSON building and manipulation on the commandline
+Tested-With:   GHC == 7.0.2
+Build-Type:    Simple
+
+Executable jw
+  Main-Is:       jsonwrench.hs
+  Build-Depends: aeson,
+                 attoparsec >= 0.10,
+                 base >= 4,
+                 bytestring,
+                 containers,
+                 text,
+                 unordered-containers >= 0.2.1,
+                 vector
+  Extensions:    OverloadedStrings,
+                 ScopedTypeVariables
+  GHC-Options:   -Wall -fno-warn-type-defaults -threaded -O2
