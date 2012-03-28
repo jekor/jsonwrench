@@ -2,6 +2,7 @@ import Control.Applicative ((<$>))
 import Control.Monad (when)
 import Data.Aeson (encode, json, Value(..), object)
 import Data.Aeson.Parser (value)
+import Data.Attoparsec.Char8 (skipSpace)
 import Data.Attoparsec.Combinator (many1)
 import Data.Attoparsec.ByteString.Lazy (parse, Result(..))
 import qualified Data.ByteString.Lazy as BS
@@ -30,7 +31,7 @@ main = do
                BS.putStrLn $ encode $ fromList $ zip ks vs
           else error "ziplines requires an even number of input lines"
     ["array"] -> do
-       js' <- parse (many1 value) <$> BS.getContents
+       js' <- parse (many1 (skipSpace >> value)) <$> BS.getContents
        case js' of
          Done _ js -> BS.putStrLn $ encode js
          Fail _ _ err -> error err
