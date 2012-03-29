@@ -142,3 +142,24 @@ $ cat articles.json
 $ jw unarray < articles.json
 {"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}
 {"title": JSONWrench Examples", "author": "jekor", "date": "2012-03-27"}
+
+### extract values from objects by key
+
+$ cat article.json
+{"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}
+$ jw lookup date < article.json
+"2012-03-26"
+$ jw lookup missing < article.json
+null
+
+### extract keys from each object in an array
+
+$ cat articles.json
+[{"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}, {"title": JSONWrench Examples", "author": "jekor", "date": "2012-03-27"}]
+$ jw unarray < articles.json | map jw lookup date
+"2012-03-26"
+"2012-03-27"
+$ jw unarray < articles.json | map jw lookup date | jw array
+["2012-03-26","2012-03-27"]
+
+Note that the map command might not be available on your system. It invokes the given command for each line of stdin (passing that line into the command's stdin)

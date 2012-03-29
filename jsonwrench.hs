@@ -6,7 +6,7 @@ import Data.Attoparsec.Char8 (skipSpace)
 import Data.Attoparsec.Combinator (many1)
 import Data.Attoparsec.ByteString.Lazy (parse, Result(..))
 import qualified Data.ByteString.Lazy as BL
-import Data.HashMap.Lazy (unions)
+import Data.HashMap.Lazy (unions, lookupDefault)
 import Data.List (intercalate)
 import Data.Map (fromList)
 import Data.Text (pack)
@@ -86,5 +86,13 @@ main = do
        case j' of
          Done _ j -> let name = pack $ intercalate " " ss in
                      BL.putStrLn $ encode $ object [(name, j)]
+         Fail _ _ err -> error err
+    ("lookup":ss) -> do
+       when (ss == []) $ error "jw lookup <key name>"
+       j' <- parse value <$> BL.getContents
+       case j' of
+         Done _ (Object o) -> let name = pack $ intercalate " " ss in
+                              BL.putStrLn $ encode $ lookupDefault Null name o
+         Done _ _ -> error "lookup requires a JSON object"
          Fail _ _ err -> error err
     _  -> error "jw [command]"
