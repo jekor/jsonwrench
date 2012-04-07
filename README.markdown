@@ -109,7 +109,7 @@ Note that if we had used jw lines, the inputs would have been considered strings
 
     $ cat articles
     [{"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}, {"title": JSONWrench Examples", "author": "jekor", "date": "2012-03-27"}]
-    $ jw name the articles < articles
+    $ jw name "the articles" < articles
     {"the articles": [{"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}, {"title": JSONWrench Examples", "author": "jekor", "date": "2012-03-27"}]}
 
 <!-- Note that "articles" must first be converted into a JSON array. JSONWrench does not attempt to infer the type of its input, because doing so could lead to ambiguities. Instead, each operation requires inputs to be of a certain type. In this case, zip expects 2 arrays. -->
