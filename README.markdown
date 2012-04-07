@@ -4,13 +4,11 @@ JSONWrench - build and manipulate JSON from the commandline
 
 ## Building JSON from Strings
 
-With no arguments, jsonwrench converts its input into a string, escaping special characters as necessary.
-
 ### convert text to a string
 
-$ echo -n "hello, JSONWrench" | jw
+$ echo -n "hello, JSONWrench" | jw string
 "hello, jsonwrench"
-$ echo 'hello, "JSONWrench"' | jw
+$ echo 'hello, "JSONWrench"' | jw string
 "hello, \"jsonwrench\"\n"
 
 ### convert lines into an array
@@ -71,6 +69,25 @@ $ cat values.json
 ["Introducing JSONWrench", "jekor", "2012-03-26"]
 $ cat keys.json values.json | jw zip
 {"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}
+
+### Normalizing JSON
+
+$ cat ugly.json
+[{"title":
+"Introducing JSONWrench", "author":
+"jekor", "date":
+"2012-03-26"}
+
+]
+$ jw normalize < ugly.json
+[{"author":"jekor","date":"2012-03-26","title":"Introducing JSONWrench"}]
+$ cat greeting
+"hi
+there"
+$ jw normalize < greeting
+"hi\nthere"
+
+Note that a side-effect of normalization is that the entire JSON object fits on 1 line. This is useful for more complex manipulation. Another useful side-effect is that keys are sorted alphabetically. This allows for normalized JSON objects to be compared for equality using string comparison.
 
 ## Building Nested Data Structures
 
@@ -163,3 +180,22 @@ $ jw unarray < articles.json | map jw lookup date | jw array
 ["2012-03-26","2012-03-27"]
 
 Note that the map command might not be available on your system. It invokes the given command for each line of stdin (passing that line into the command's stdin)
+
+### sorting on a key
+
+First, using paste and cut. The idea here is to pull out the key we want to sort on, paste it to the front of the line, sort, and then cut it out of the line once sorted.
+
+$ cat articles.json
+[{"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}, {"title": JSONWrench Examples", "author": "jekor", "date": "2012-03-27"}, {"title": "JSONWrench Design Notes", "author": "jekor", "date": "2012-03-23"}]
+$ jw unarray < articles.json | map jw lookup date > dates
+$ jw unarray < articles.json | paste dates -
+"2012-03-26"    {"author":"jekor","date":"2012-03-26","title":"Introducing JSONWrench"}
+"2012-03-27"    {"author":"jekor","date":"2012-03-27","title":"JSONWrench Examples"}
+"2012-03-23"    {"author":"jekor","date":"2012-03-23","title":"JSONWrench Design Notes"}
+$ jw unarray < articles.json | paste dates - | sort | cut -f2
+{"author":"jekor","date":"2012-03-23","title":"JSONWrench Design Notes"}
+{"author":"jekor","date":"2012-03-26","title":"Introducing JSONWrench"}
+{"author":"jekor","date":"2012-03-27","title":"JSONWrench Examples"}
+$ jw unarray < articles.json | paste dates - | sort | cut -f2 | jw array
+[{"title": "JSONWrench Design Notes", "author": "jekor", "date": "2012-03-23"},{"author":"jekor","date":"2012-03-26","title":"Introducing JSONWrench"},{"author":"jekor","date":"2012-03-27","title":"JSONWrench Examples"}]
+$ rm dates

@@ -22,8 +22,7 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
-    -- No arguments? Convert input into a JSON string.
-    [] -> TL.getContents >>= BL.putStrLn . encode
+    ["string"] -> TL.getContents >>= BL.putStrLn . encode
     ["lines"] -> TL.getContents >>= BL.putStrLn . encode . lines
     ["ziplines"] -> do
        ls <- lines <$> TL.getContents
@@ -79,6 +78,11 @@ main = do
                                  Object obj -> obj
                                  _          -> error "merge requires all arguments to be JSON objects") js
            BL.putStrLn $ encode $ unions $ reverse os
+         Fail _ _ err -> error err
+    ["normalize"] -> do
+       j' <- parse value <$> BL.getContents
+       case j' of
+         Done _ j -> BL.putStrLn $ encode j
          Fail _ _ err -> error err
     ("name":ss) -> do
        when (ss == []) $ error "jw name <key name>"
