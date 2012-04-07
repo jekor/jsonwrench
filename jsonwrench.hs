@@ -1,10 +1,10 @@
-import Control.Applicative ((<$>))
+import Control.Applicative ((<$>), (<*), (*>))
 import Control.Monad (when)
 import Data.Aeson (encode, json, Value(..), object)
 import Data.Aeson.Parser (value)
 import Data.Attoparsec.Char8 (skipSpace)
-import Data.Attoparsec.Combinator (many1)
-import Data.Attoparsec.ByteString.Lazy (parse, Result(..))
+import Data.Attoparsec.Combinator (many1, manyTill)
+import Data.Attoparsec.ByteString.Lazy (parse, Result(..), endOfInput)
 import qualified Data.ByteString.Lazy as BL
 import Data.HashMap.Lazy (unions, lookupDefault)
 import Data.List (intercalate)
@@ -42,7 +42,7 @@ main = do
          Done _ _ -> error "unarray requires a JSON array"
          Fail _ _ err -> error err
     ["array"] -> do
-       js' <- parse (many1 (skipSpace >> value)) <$> BL.getContents
+       js' <- parse (skipSpace *> manyTill (value <* skipSpace) endOfInput) <$> BL.getContents
        case js' of
          Done _ js -> BL.putStrLn $ encode js
          Fail _ _ err -> error err
