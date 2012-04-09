@@ -24,6 +24,13 @@ main = do
   case args of
     ["string"] -> TL.getContents >>= BL.putStrLn . encode
 
+    ["unstring"] -> do
+       j' <- parse (skipSpace *> value <* skipSpace <* endOfInput) <$> BL.getContents
+       case j' of
+         Done _ (String s) -> T.putStr s
+         Done _ _ -> error "unstring requires a JSON string"
+         Fail _ _ err -> error err
+
     ["lines"] -> TL.getContents >>= BL.putStrLn . encode . lines
 
     ["ziplines"] -> do
