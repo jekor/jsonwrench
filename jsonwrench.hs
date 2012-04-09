@@ -23,13 +23,16 @@ main = do
   args <- getArgs
   case args of
     ["string"] -> TL.getContents >>= BL.putStrLn . encode
+
     ["lines"] -> TL.getContents >>= BL.putStrLn . encode . lines
+
     ["ziplines"] -> do
        ls <- lines <$> TL.getContents
        if even $ length ls
           then let (ks, vs) = splitAt ((length ls) `div` 2) ls in
                BL.putStrLn $ encode $ fromList $ zip ks vs
           else error "ziplines requires an even number of input lines"
+
     ["unlines"] -> do
        j' <- parse json <$> BL.getContents
        case j' of
@@ -40,17 +43,20 @@ main = do
            V.mapM_ T.putStrLn ss
          Done _ _ -> error "unarray requires a JSON array"
          Fail _ _ err -> error err
+
     ["array"] -> do
        js' <- parse (skipSpace *> manyTill (value <* skipSpace) endOfInput) <$> BL.getContents
        case js' of
          Done _ js -> BL.putStrLn $ encode js
          Fail _ _ err -> error err
+
     ["unarray"] -> do
        j' <- parse json <$> BL.getContents
        case j' of
          Done _ (Array a) -> V.mapM_ (BL.putStrLn . encode) a
          Done _ _ -> error "unarray requires a JSON array"
          Fail _ _ err -> error err
+
     ["zip"] -> do
        js' <- parse (many1 json) <$> BL.getContents
        case js' of
@@ -61,6 +67,7 @@ main = do
            BL.putStrLn $ encode $ object $ V.toList $ V.zip ks vs
          Done _ _ -> error "zip requires 2 JSON arrays"
          Fail _ _ err -> error err
+
     ["concat"] -> do
        js' <- parse (many1 json) <$> BL.getContents
        case js' of
@@ -70,6 +77,7 @@ main = do
                                  _          -> error "merge requires all arguments to be JSON arrays") js
            BL.putStrLn $ encode $ V.concat as
          Fail _ _ err -> error err
+
     ["merge"] -> do
        js' <- parse (many1 json) <$> BL.getContents
        case js' of
@@ -79,24 +87,26 @@ main = do
                                  _          -> error "merge requires all arguments to be JSON objects") js
            BL.putStrLn $ encode $ unions $ reverse os
          Fail _ _ err -> error err
+
     ["normalize"] -> do
        j' <- parse value <$> BL.getContents
        case j' of
          Done _ j -> BL.putStrLn $ encode j
          Fail _ _ err -> error err
-    ("name":ss) -> do
-       when (ss == []) $ error "jw name <key name>"
+
+    ["name",name] -> do
        j' <- parse value <$> BL.getContents
        case j' of
-         Done _ j -> let name = pack $ intercalate " " ss in
-                     BL.putStrLn $ encode $ object [(name, j)]
+         Done _ j -> BL.putStrLn $ encode $ object [(pack name, j)]
          Fail _ _ err -> error err
-    ("lookup":ss) -> do
-       when (ss == []) $ error "jw lookup <key name>"
+    ("name":_) -> error "jw name <key name>"
+
+    ["lookup",name] -> do
        j' <- parse value <$> BL.getContents
        case j' of
-         Done _ (Object o) -> let name = pack $ intercalate " " ss in
-                              BL.putStrLn $ encode $ lookupDefault Null name o
+         Done _ (Object o) -> BL.putStrLn $ encode $ lookupDefault Null (pack name) o
          Done _ _ -> error "lookup requires a JSON object"
          Fail _ _ err -> error err
+    ("lookup":_) -> error "jw lookup <key name>"
+
     _  -> error "jw [command]"
