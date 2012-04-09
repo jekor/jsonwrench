@@ -178,6 +178,15 @@ This also works for non-string elements.
     $ jw drop date author < article.json
     {"title": "Introducing JSONWrench"}
 
+### remove values from objects by specifying the keys you'd like to keep
+
+    $ cat article.json
+    {"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}
+    $ jw take date < article.json
+    {"date": "2012-03-26"}
+    $ jw take date author < article.json
+    {"date": "2012-03-26", "author": "jekor"}
+
 ### extract keys from each object in an array
 
     $ cat articles.json

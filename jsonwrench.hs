@@ -123,4 +123,12 @@ main = do
          Done _ _ -> error "drop requires a JSON object"
          Fail _ _ err -> error err
 
+    ("take":keys) -> do
+       when (keys == []) $ error "jw take <key name(s)>"
+       j' <- parse (skipSpace *> value <* skipSpace <* endOfInput) <$> BL.getContents
+       case j' of
+         Done _ (Object o) -> BL.putStrLn $ encode $ HM.intersection o $ foldr (\k o' -> HM.insert k "" o') HM.empty $ map pack keys
+         Done _ _ -> error "take requires a JSON object"
+         Fail _ _ err -> error err
+
     _  -> error "jw [command]"
