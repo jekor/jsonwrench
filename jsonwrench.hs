@@ -6,8 +6,7 @@ import Data.Attoparsec.Char8 (skipSpace)
 import Data.Attoparsec.Combinator (many1, manyTill)
 import Data.Attoparsec.ByteString.Lazy (parse, Result(..), endOfInput)
 import qualified Data.ByteString.Lazy as BL
-import Data.HashMap.Lazy (unions, lookupDefault)
-import Data.List (intercalate)
+import qualified Data.HashMap.Lazy as HM
 import Data.Map (fromList)
 import Data.Text (pack)
 import Data.Text.Lazy (lines)
@@ -92,7 +91,7 @@ main = do
            let os = map (\o -> case o of
                                  Object obj -> obj
                                  _          -> error "merge requires all arguments to be JSON objects") js
-           BL.putStrLn $ encode $ unions $ reverse os
+           BL.putStrLn $ encode $ HM.unions $ reverse os
          Fail _ _ err -> error err
 
     ["normalize"] -> do
@@ -111,9 +110,17 @@ main = do
     ["lookup",name] -> do
        j' <- parse value <$> BL.getContents
        case j' of
-         Done _ (Object o) -> BL.putStrLn $ encode $ lookupDefault Null (pack name) o
+         Done _ (Object o) -> BL.putStrLn $ encode $ HM.lookupDefault Null (pack name) o
          Done _ _ -> error "lookup requires a JSON object"
          Fail _ _ err -> error err
     ("lookup":_) -> error "jw lookup <key name>"
+
+    ("drop":keys) -> do
+       when (keys == []) $ error "jw drop <key name(s)>"
+       j' <- parse (skipSpace *> value <* skipSpace <* endOfInput) <$> BL.getContents
+       case j' of
+         Done _ (Object o) -> BL.putStrLn $ encode $ foldr HM.delete o $ map pack keys
+         Done _ _ -> error "drop requires a JSON object"
+         Fail _ _ err -> error err
 
     _  -> error "jw [command]"

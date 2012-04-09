@@ -169,6 +169,15 @@ This also works for non-string elements.
     $ jw lookup missing < article.json
     null
 
+### remove values from objects by key
+
+    $ cat article.json
+    {"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}
+    $ jw drop date < article.json
+    {"title": "Introducing JSONWrench", "author": "jekor"}
+    $ jw drop date author < article.json
+    {"title": "Introducing JSONWrench"}
+
 ### extract keys from each object in an array
 
     $ cat articles.json
