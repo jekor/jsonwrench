@@ -1,5 +1,5 @@
 Name:          jsonwrench
-Version:       0.3.1
+Version:       0.4.0
 Cabal-Version: >= 1.2
 License:       GPL
 License-File:  COPYING
@@ -13,7 +13,7 @@ Package-URL:   https://github.com/jekor/jsonwrench/zipball/master
 Category:      Text
 Synopsis:      JSON building and manipulation on the commandline
 Description:   JSON building and manipulation on the commandline
-Tested-With:   GHC == 7.0.2
+Tested-With:   GHC == 7.4.1
 Build-Type:    Simple
 
 Executable jw

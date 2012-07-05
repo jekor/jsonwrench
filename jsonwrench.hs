@@ -115,6 +115,16 @@ main = do
          Fail _ _ err -> error err
     ("lookup":_) -> error "jw lookup <key name>"
 
+    ["insert",name] -> do
+       j1 <- parse (skipSpace *> value) <$> BL.getContents
+       case j1 of
+         Done s (Object o) ->
+           case parse (skipSpace *> value <* skipSpace <* endOfInput) s of
+             Done _ v -> BL.putStrLn $ encode $ HM.insert (pack name) v o
+             Fail _ _ err -> error err
+         Done _ _ -> error "insert requires a JSON object first"
+         Fail _ _ err -> error err
+
     ("drop":keys) -> do
        when (keys == []) $ error "jw drop <key name(s)>"
        j' <- parse (skipSpace *> value <* skipSpace <* endOfInput) <$> BL.getContents

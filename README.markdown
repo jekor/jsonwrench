@@ -61,6 +61,13 @@ JSONWrench - build and manipulate JSON from the commandline
     $ cat object1 object2 object3 | jw merge
     {"title": "Revised Title", "author": "jekor", "date": "2012-03-26"}
 
+### inserting new keys
+
+    $ cat object1
+    {"title": "Introducing JSONWrench", "author": "jekor"}
+    $ cat object 1 <(date) | jw insert date
+    {"title": "Introducing JSONWrench", "author": "jekor", "date": }
+
 ### combining arrays of keys and values into an object
 
     $ cat keys.json
