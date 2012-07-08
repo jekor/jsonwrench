@@ -5,7 +5,7 @@ import Data.Aeson.Parser (value)
 import Data.Attoparsec.Char8 (skipSpace)
 import Data.Attoparsec.Combinator (many1, manyTill)
 import Data.Attoparsec.ByteString.Lazy (parse, Result(..), endOfInput)
-import qualified Data.ByteString.Lazy as BL
+import qualified Data.ByteString.Lazy.Char8 as BL
 import qualified Data.HashMap.Lazy as HM
 import Data.Map (fromList)
 import Data.Text (pack)

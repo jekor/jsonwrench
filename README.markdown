@@ -224,3 +224,9 @@ First, using paste and cut. The idea here is to pull out the key we want to sort
     $ jw unarray < articles.json | paste dates - | sort | cut -f2 | jw array
     [{"title": "JSONWrench Design Notes", "author": "jekor", "date": "2012-03-23"}, {"author": "jekor", "date": "2012-03-26", "title": "Introducing JSONWrench"}, {"author": "jekor", "date": "2012-03-27", "title": "JSONWrench Examples"}]
     $ rm dates
+
+## Common Problems
+
+### `jw: <stdin>: hGetContents: invalid argument (invalid byte sequence)`
+
+Make sure that your locale is set correctly.
