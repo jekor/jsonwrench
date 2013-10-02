@@ -65,8 +65,8 @@ JSONWrench - build and manipulate JSON from the commandline
 
     $ cat object1
     {"title": "Introducing JSONWrench", "author": "jekor"}
-    $ cat object 1 <(date) | jw insert date
-    {"title": "Introducing JSONWrench", "author": "jekor", "date": }
+    $ cat object1 <(date -Idate) | jw insert date
+    {"title": "Introducing JSONWrench", "author": "jekor", "date": "2012-03-26"}
 
 ### combining arrays of keys and values into an object
 
@@ -123,13 +123,13 @@ Note that if we had used jw lines, the inputs would have been considered strings
 
 ### nesting arrays
 
-    $ cat array1 array2 array3 | jsonwrench merge
+    $ cat array1 array2 array3 | jw merge
     ["line 1", "line 2", "line 3", "line 4", "line 5", "line 6"]
-    $ cat array1 array2 array3 | jsonwrench array
+    $ cat array1 array2 array3 | jw array
     [["line 1", "line 2", "line 3"], ["line 4", "line 5"], ["line 6"]]
-    $ cat array2 array3 | jsonwrench array
+    $ cat array2 array3 | jw array
     [["line 4", "line 5"], ["line 6"]]
-    $ echo `cat array1` `cat array2 array3 | jsonwrench array` | jsonwrench array
+    $ echo `cat array1` `cat array2 array3 | jw array` | jw array
     [["line 1", "line 2", "line 3"], [["line 4", "line 5"], ["line 6"]]]
 
 ## Deconstructing JSON
