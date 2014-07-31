@@ -5,13 +5,14 @@ import Data.Aeson.Parser (value)
 import Data.Attoparsec.Char8 (skipSpace)
 import Data.Attoparsec.Combinator (many1, manyTill)
 import Data.Attoparsec.ByteString.Lazy (parse, Result(..), endOfInput)
-import qualified Data.ByteString.Lazy.Char8 as BL
+import qualified Data.ByteString as BS
+import qualified Data.ByteString.Lazy as BL
+import Data.ByteString.Lazy.Char8 (lines)
 import qualified Data.HashMap.Lazy as HM
 import Data.Map (fromList)
 import Data.Text (pack)
-import Data.Text.Lazy (lines)
-import qualified Data.Text.Lazy.IO as TL
-import qualified Data.Text.IO as T
+import Data.Text.Encoding (encodeUtf8)
+import Data.Text.Lazy.Encoding (decodeUtf8)
 import qualified Data.Vector as V
 import System.Environment (getArgs)
 
@@ -21,19 +22,19 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
-    ["string"] -> TL.getContents >>= BL.putStrLn . encode
+    ["string"] -> BL.getContents >>= BL.putStrLn . encode . decodeUtf8
 
     ["unstring"] -> do
        j' <- parse (skipSpace *> value <* skipSpace <* endOfInput) <$> BL.getContents
        case j' of
-         Done _ (String s) -> T.putStr s
+         Done _ (String s) -> BS.putStr (encodeUtf8 s)
          Done _ _ -> error "unstring requires a JSON string"
          Fail _ _ err -> error err
 
-    ["lines"] -> TL.getContents >>= BL.putStrLn . encode . lines
+    ["lines"] -> BL.getContents >>= BL.putStrLn . encode . map decodeUtf8 . lines
 
     ["ziplines"] -> do
-       ls <- lines <$> TL.getContents
+       ls <- map decodeUtf8 . lines <$> BL.getContents
        if even $ length ls
           then let (ks, vs) = splitAt ((length ls) `div` 2) ls in
                BL.putStrLn $ encode $ fromList $ zip ks vs
@@ -46,7 +47,7 @@ main = do
            let ss = V.map (\s -> case s of
                                    String str -> str
                                    _          -> error "unlines requires the JSON array to contain only strings") a
-           V.mapM_ T.putStrLn ss
+           V.mapM_ (BS.putStrLn . encodeUtf8) ss
          Done _ _ -> error "unarray requires a JSON array"
          Fail _ _ err -> error err
 
