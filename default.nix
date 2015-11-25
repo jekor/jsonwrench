@@ -3,7 +3,7 @@
 }:
 mkDerivation {
   pname = "jsonwrench";
-  version = "0.5.1";
+  version = "0.5.3";
   src = ./.;
   isLibrary = false;
   isExecutable = true;

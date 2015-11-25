@@ -35,7 +35,7 @@ main = do
     ["ziplines"] -> do
        ls <- map decodeUtf8 . BL8.lines <$> BL.getContents
        if even $ length ls
-          then let (ks, vs) = splitAt ((length ls) `div` 2) ls in
+          then let (ks, vs) = splitAt (length ls `div` 2) ls in
                BL8.putStrLn $ encode $ fromList $ zip ks vs
           else error "ziplines requires an even number of input lines"
 
@@ -126,18 +126,18 @@ main = do
          Fail _ _ err -> error err
 
     ("drop":keys) -> do
-       when (keys == []) $ error "jw drop <key name(s)>"
+       when (null keys) $ error "jw drop <key name(s)>"
        j' <- parse (skipSpace *> value <* skipSpace <* endOfInput) <$> BL.getContents
        case j' of
-         Done _ (Object o) -> BL8.putStrLn $ encode $ foldr HM.delete o $ map pack keys
+         Done _ (Object o) -> BL8.putStrLn $ encode $ foldr (HM.delete . pack) o keys
          Done _ _ -> error "drop requires a JSON object"
          Fail _ _ err -> error err
 
     ("take":keys) -> do
-       when (keys == []) $ error "jw take <key name(s)>"
+       when (null keys) $ error "jw take <key name(s)>"
        j' <- parse (skipSpace *> value <* skipSpace <* endOfInput) <$> BL.getContents
        case j' of
-         Done _ (Object o) -> BL8.putStrLn $ encode $ HM.intersection o $ foldr (\k o' -> HM.insert k "" o') HM.empty $ map pack keys
+         Done _ (Object o) -> BL8.putStrLn $ encode $ HM.intersection o $ foldr ((\k o' -> HM.insert k "" o') . pack) HM.empty keys
          Done _ _ -> error "take requires a JSON object"
          Fail _ _ err -> error err
 
