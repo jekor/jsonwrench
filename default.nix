@@ -1,7 +1,17 @@
-{ buildLocalCabal ? (import <nixpkgs> {}).haskellPackages.buildLocalCabal
-, src ? ./.
+{ mkDerivation, aeson, attoparsec, base, bytestring, containers
+, stdenv, text, unordered-containers, vector
 }:
-
-{
-  build = buildLocalCabal src "jsonwrench";
+mkDerivation {
+  pname = "jsonwrench";
+  version = "0.5.1";
+  src = ./.;
+  isLibrary = false;
+  isExecutable = true;
+  executableHaskellDepends = [
+    aeson attoparsec base bytestring containers text
+    unordered-containers vector
+  ];
+  homepage = "https://github.com/jekor/jsonwrench";
+  description = "JSON building and manipulation on the commandline";
+  license = "MIT";
 }

@@ -1,4 +1,3 @@
-import Control.Applicative ((<$>), (<*), (*>))
 import Control.Monad (when)
 import Data.Aeson (encode, json, Value(..), object)
 import Data.Aeson.Parser (value)
