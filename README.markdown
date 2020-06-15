@@ -236,7 +236,5 @@ Make sure that your locale is set correctly.
 I build jsonwrench with [Nix](http://nixos.org/nix/) to try to ensure reproducible builds:
 
 ```
-nix-build dev.nix
+nix build
 ```
-
-`default.nix` is for inclusion in a top-level file (such as `all-packages.nix`). `dev.nix` builds jsonwrench with a fixed version of nixpkgs, providing stability at the cost of inflating the nix store.

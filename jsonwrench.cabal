@@ -13,7 +13,7 @@ Package-URL:   https://github.com/jekor/jsonwrench/zipball/master
 Category:      Text
 Synopsis:      JSON building and manipulation on the commandline
 Description:   JSON building and manipulation on the commandline
-Tested-With:   GHC == 8.0.2
+Tested-With:   GHC == 8.6.5
 Build-Type:    Simple
 
 Executable jw
