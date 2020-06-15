@@ -21,12 +21,12 @@ main :: IO ()
 main = do
   args <- getArgs
   case args of
-    ["string"] -> BL.getContents >>= BL8.putStrLn . encode . decodeUtf8
+    ["string"] -> BL.getContents >>= BL8.putStr . encode . decodeUtf8
 
     ["unstring"] -> do
        j' <- parse (skipSpace *> value <* skipSpace <* endOfInput) <$> BL8.getContents
        case j' of
-         Done _ (String s) -> BS8.putStrLn (encodeUtf8 s)
+         Done _ (String s) -> BS8.putStr (encodeUtf8 s)
          Done _ _ -> error "unstring requires a JSON string"
          Fail _ _ err -> error err
 
